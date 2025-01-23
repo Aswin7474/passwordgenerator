@@ -1,0 +1,59 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  height: 100vh;
+}
+
+
+.sidebar {
+  background-color: rgb(51, 102, 255);
+  left: 0px;
+  top: 0;
+  height: 100vh;
+  width: 20vw;
+}
+
+.s_bar_element {
+  display: flex;
+  justify-content: center;
+  padding-top: 4vh;
+}
+
+.logo {
+  size: 10px;
+}
+
+
+.main {
+  display: grid;
+  grid-template-rows: 1fr 4.5fr;
+
+}
+.new_button {
+  display: flex;
+  height: 2rem;
+  flex-direction: row-reverse;
+  padding-right: 2vw;
+  padding-top: 1vh;
+
+}
+
+#onefr {
+  background-color: orange;
+}
+
+#threefr {
+  display: grid;
+  grid-template-rows: 1fr 7fr;
+}
+
+#passwordtable {
+  
+}
+

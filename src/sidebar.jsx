@@ -11,18 +11,13 @@ function Sidebar() {
     const [genPassword, setGenPassword] = useState("");
     const [trigger, setTrigger] = useState(1);
 
+    const [newEntry, setNewEntry] = useState({ }) 
+
     const [editBoxData, setEditBoxData] = useState(null);
     const [newDetails, setNewDetails] = useState({website: "", username: "", password: ""})
 
-    const dialogRef = useRef(null);
-
-    const openDialog = () => {
-      dialogRef.current.showModal();
-    };
-  
-    const closeDialog = () => {
-      dialogRef.current.close();
-    };
+    const editDialogRef = useRef(null);
+    const addDialogRef = useRef(null);
 
     useEffect(() => {
         axios.get('http://localhost:5001/password')
@@ -70,6 +65,10 @@ function Sidebar() {
             setTrigger((prev) => !prev);
         })
         .catch((error) => console.error(error));
+
+        // setUsername("")
+        // setPassword("");
+        // setWebsite("");
         
         console.log(`trigger: ${trigger}`);
         
@@ -90,8 +89,10 @@ function Sidebar() {
 
     const generatePassword = (event) => {
         event.preventDefault();
-        setGenPassword(PasswordGenerator(settings))
-        console.log(genPassword);
+        const newPass = PasswordGenerator(settings)
+        setGenPassword(newPass)
+        setPassword(newPass);
+        console.log(password);
     }
 
     const ChangeEditData = (target_id) => {
@@ -174,14 +175,14 @@ function Sidebar() {
                                 <input type="checkbox" id="nums" name="includeNumbers" checked={settings.includeNumbers} onChange={settingsChange} />
                                 <label for="nums">Include Nums</label>
                             </div>
-                            <button type="submit">Generate Password</button>
+                            <button type="submit" value={genPassword} onClick={generatePassword}>Generate Password</button>
                         </form>
 
-                        {genPassword.length > 0? (<p>{genPassword}</p>): (<p>{}</p>)}
+                        {/* {genPassword.length > 0? (<p>{genPassword}</p>): (<p>{}</p>)} */}
 
 
                         <div className="new_button">
-                            <button >New</button>
+                            <button onClick={() => {addDialogRef?.current?.showModal()}} >New</button>
                         </div>
                     </div>
                     <div id="passwordtable">
@@ -194,22 +195,19 @@ function Sidebar() {
                                 </tr>
                         
                         {Object.entries(passOb).map(([key, value]) => (
-                            // <div id="passwordboxes" key={key}>
-                            //     {value.website ? value.website.name : 'No website'}: {value.username}: {value.password}
-                            // </div>
                             
                                 <tr id='passwordSmallBoxes'>
                                     <th>{value.website.name}</th>
                                     <th>{value.username}</th>
                                     <th>{value.password}</th> 
-                                    <th><button onClick={() => {ChangeEditData(value._id); dialogRef?.current?.showModal()}}>Edit</button></th>
+                                    <th><button onClick={() => {ChangeEditData(value._id); editDialogRef?.current?.showModal()}}>Edit</button></th>
                                     <th><button onClick={() => {deletePassword(value._id)}} >Delete</button></th>
                                 </tr>
                            
                         ))}
                         </table>
                         
-                        <dialog ref={dialogRef} >
+                        <dialog ref={editDialogRef} >
                             <div className="editbox">
                                 <form onSubmit={editDetails}>
                                     <h3>Website</h3>
@@ -221,12 +219,30 @@ function Sidebar() {
                                     <h3>Password</h3>
                                     <input id='passwordbox' name='password' value={editBoxData ? editBoxData.password: ""} onChange={handleNewDetails} />
                                     <br></br>
-                                    <button onClick={() => dialogRef?.current?.close() }>Cancel</button>
-                                    <button type="submit" onClick={() => dialogRef?.current?.close()}>Save Changes</button>
+                                    <button onClick={() => editDialogRef?.current?.close() }>Cancel</button>
+                                    <button type="submit" onClick={() => editDialogRef?.current?.close()}>Save Changes</button>
                                 </form>
-                                
                             </div>
-                        </dialog>                     
+                        </dialog>
+
+                        <dialog ref={addDialogRef}>
+                            <div className="editbox">
+                                <form onSubmit={addPassword}>
+                                    <input type="text" placeholder="website" onChange={(event) => setWebsite(event.target.value)} />
+                                    <br></br>
+                                    <input type="text" placeholder="username" onChange={(event) => setUsername(event.target.value)} />
+                                    <br></br>
+                                    <input type="text" placeholder="password" value={genPassword ? genPassword : ""} onChange={(event) => setPassword(event.target.value)} />
+                                    <button type="button" onClick={generatePassword} >Generate Password</button>
+                                    <br></br>
+                                    <button onClick={() => {deletePassword(value._id)}}></button>
+                                    <button onClick={() => {addDialogRef?.current?.close(); } }>Cancel</button>
+                                    <button type="submit" onClick={() => addDialogRef?.current?.close()} >Submit</button>
+                                </form>
+                            </div>
+                        </dialog> 
+
+                                            
                     </div>
                     
 

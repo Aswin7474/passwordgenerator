@@ -7,9 +7,12 @@ function Sidebar() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [website, setWebsite] = useState("");
-    const [passOb, setPassOb] = useState({})
-    const [genPassword, setGenPassword] = useState("")
+    const [passOb, setPassOb] = useState({});
+    const [genPassword, setGenPassword] = useState("");
     const [trigger, setTrigger] = useState(1);
+
+    const [editBoxData, setEditBoxData] = useState(null);
+    const [newDetails, setNewDetails] = useState({website: "", username: "", password: ""})
 
     //const [length, setLength] = useState(14);
 
@@ -17,10 +20,11 @@ function Sidebar() {
         axios.get('http://localhost:5001/password')
         .then((data) => {
             setPassOb(data.data)
+            console.log(JSON.stringify(data.data))
         })
         .catch((error) => console.error(error));
 
-        console.log(JSON.stringify(passOb))
+        
     }, [trigger]);
 
     const [settings, setSettings] = useState({
@@ -55,17 +59,59 @@ function Sidebar() {
         })
         .then(() => {
             console.log("Successfully inserted new entry");
+            setTrigger((prev) => !prev);
         })
         .catch((error) => console.error(error));
         
         console.log(`trigger: ${trigger}`);
-        setTrigger((prev) => !prev);
-    } 
+        
+    }
+
+    const deletePassword = (value) => {
+        console.log(value)
+        axios.delete(`http://localhost:5001/password/${value}`)
+        .then((data) => {
+            console.log(data);
+            setTrigger((prev) => !prev);
+        })
+        .catch((error) => {
+            console.error(error);
+        })
+        
+    }
 
     const generatePassword = (event) => {
         event.preventDefault();
         setGenPassword(PasswordGenerator(settings))
         console.log(genPassword);
+    }
+
+    const ChangeEditData = (target_id) => {
+        setEditBoxData(passOb.find((item) => item._id === target_id));
+        console.log(editBoxData);
+
+
+    }
+
+    const editDetails = (event) => {
+        event.preventDefault();
+        axios.patch(`http://localhost:5001/password/${editBoxData._id}`, {
+            website: editBoxData.website,
+            username: editBoxData.username,
+            password: editBoxData.password
+        })
+        .then((data) => {
+            console.log(data);
+            setTrigger((prev) => !prev);
+        })
+        .catch((err) => console.error(err));
+
+        
+    }
+
+    const handleNewDetails = (event) => {
+        setNewDetails({...newDetails, [event.target.name]: event.target.value})
+        setEditBoxData({...editBoxData, [event.target.name]: event.target.value})
     }
     
     return (
@@ -131,13 +177,51 @@ function Sidebar() {
                         </div>
                     </div>
                     <div id="passwordtable">
+                        <table className="passwordBoxes">
+                                <tr>
+                                    <th>Website</th>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                    
+                                </tr>
                         
                         {Object.entries(passOb).map(([key, value]) => (
-                            <ul key={key}>
-                                {value.website ? value.website.name : 'No website'}: {value.username}: {value.password}
-                            </ul>
+                            // <div id="passwordboxes" key={key}>
+                            //     {value.website ? value.website.name : 'No website'}: {value.username}: {value.password}
+                            // </div>
+                            
+                                <tr id='passwordSmallBoxes'>
+                                    <th>{value.website.name}</th>
+                                    <th>{value.username}</th>
+                                    <th>{value.password}</th> 
+                                    <th><button onClick={() => {ChangeEditData(value._id)}}>Edit</button></th>
+                                    <th><button onClick={() => {deletePassword(value._id)}} >Delete</button></th>
+                                </tr>
+                           
                         ))}
+                        </table>
+                        
+                        <div open >
+                            <div className="editbox">
+                                <form onSubmit={editDetails}>
+                                    <h3>Website</h3>
+                                    <input id='websitebox' name = "website" value={editBoxData ? editBoxData.website.name: ""} onChange={handleNewDetails} />
+                                    <br></br>
+                                    <h3>Username</h3>
+                                    <input id='usernamebox' name="username" value={editBoxData ? editBoxData.username: ""} onChange={handleNewDetails} />
+                                    <br></br>
+                                    <h3>Password</h3>
+                                    <input id='passwordbox' name='password' value={editBoxData ? editBoxData.password: ""} onChange={handleNewDetails} />
+                                    <br></br>
+                                    <button>Cancel</button>
+                                    <button type="submit">Save Changes</button>
+                                </form>
+                                
+                            </div>
+                        </div>
+                        
                     </div>
+                    
 
                 </div>
 

@@ -1,6 +1,5 @@
 import express from 'express';
 const router = express.Router();
-// const passwords = require('./routes/passwords.js');
 import Passwords from '../models/passwords.js';
 
 

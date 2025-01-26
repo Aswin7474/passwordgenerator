@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import PasswordGenerator from "./passwordGenerator";
+import axios from "axios";
 
 
 function Sidebar() {
@@ -8,8 +9,20 @@ function Sidebar() {
     const [website, setWebsite] = useState("");
     const [passOb, setPassOb] = useState({})
     const [genPassword, setGenPassword] = useState("")
+    const [trigger, setTrigger] = useState(1);
 
     //const [length, setLength] = useState(14);
+
+    useEffect(() => {
+        axios.get('http://localhost:5001/password')
+        .then((data) => {
+            setPassOb(data.data)
+        })
+        .catch((error) => console.error(error));
+
+        console.log(JSON.stringify(passOb))
+    }, [trigger]);
+
     const [settings, setSettings] = useState({
         length: 14, includeSmall: true, includeCapital: true, includeNumbers: true, includeSpecial: true
     });
@@ -29,27 +42,31 @@ function Sidebar() {
         console.log(settings.length);
     }
 
-
     const addPassword = (event) => {
         event.preventDefault();
-        setPassOb(prevPass => ({
-            ...prevPass,
-            [website]: {
-                
-                username: username,
-                password: password
-            }
-        }))
-        console.log(passOb)
-    }
+        console.log("we got here");
+
+        axios.post('http://localhost:5001/password', {
+            website: {
+                name: website
+            },
+            username: username,
+            password: password
+        })
+        .then(() => {
+            console.log("Successfully inserted new entry");
+        })
+        .catch((error) => console.error(error));
+        
+        console.log(`trigger: ${trigger}`);
+        setTrigger((prev) => !prev);
+    } 
 
     const generatePassword = (event) => {
         event.preventDefault();
         setGenPassword(PasswordGenerator(settings))
         console.log(genPassword);
     }
-
-
     
     return (
         <div className="container">
@@ -74,7 +91,7 @@ function Sidebar() {
                             <input type="text" placeholder="password" onChange={(event) => setPassword(event.target.value)} />
                             <button type="submit">Submit</button>
                         </form>
-                        <h1>FOR RANDOM GEN PASSWORD</h1>
+                        <p>FOR RANDOM GEN PASSWORD</p>
 
                         <form onSubmit={addPassword}>
                             <input type="text" placeholder="website" onChange={(event) => setWebsite(event.target.value)} />
@@ -117,7 +134,7 @@ function Sidebar() {
                         
                         {Object.entries(passOb).map(([key, value]) => (
                             <ul key={key}>
-                                {key}: {value.username}: {value.password}
+                                {value.website ? value.website.name : 'No website'}: {value.username}: {value.password}
                             </ul>
                         ))}
                     </div>
@@ -125,12 +142,6 @@ function Sidebar() {
                 </div>
 
             </div>
-
-            
-
-
-
-
         </div>
     )
     

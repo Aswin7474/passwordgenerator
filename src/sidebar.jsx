@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PasswordGenerator from "./passwordGenerator";
 import axios from "axios";
 
@@ -14,7 +14,15 @@ function Sidebar() {
     const [editBoxData, setEditBoxData] = useState(null);
     const [newDetails, setNewDetails] = useState({website: "", username: "", password: ""})
 
-    //const [length, setLength] = useState(14);
+    const dialogRef = useRef(null);
+
+    const openDialog = () => {
+      dialogRef.current.showModal();
+    };
+  
+    const closeDialog = () => {
+      dialogRef.current.close();
+    };
 
     useEffect(() => {
         axios.get('http://localhost:5001/password')
@@ -194,14 +202,14 @@ function Sidebar() {
                                     <th>{value.website.name}</th>
                                     <th>{value.username}</th>
                                     <th>{value.password}</th> 
-                                    <th><button onClick={() => {ChangeEditData(value._id)}}>Edit</button></th>
+                                    <th><button onClick={() => {ChangeEditData(value._id); dialogRef?.current?.showModal()}}>Edit</button></th>
                                     <th><button onClick={() => {deletePassword(value._id)}} >Delete</button></th>
                                 </tr>
                            
                         ))}
                         </table>
                         
-                        <div open >
+                        <dialog ref={dialogRef} >
                             <div className="editbox">
                                 <form onSubmit={editDetails}>
                                     <h3>Website</h3>
@@ -213,13 +221,12 @@ function Sidebar() {
                                     <h3>Password</h3>
                                     <input id='passwordbox' name='password' value={editBoxData ? editBoxData.password: ""} onChange={handleNewDetails} />
                                     <br></br>
-                                    <button>Cancel</button>
-                                    <button type="submit">Save Changes</button>
+                                    <button onClick={() => dialogRef?.current?.close() }>Cancel</button>
+                                    <button type="submit" onClick={() => dialogRef?.current?.close()}>Save Changes</button>
                                 </form>
                                 
                             </div>
-                        </div>
-                        
+                        </dialog>                     
                     </div>
                     
 

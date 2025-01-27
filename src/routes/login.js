@@ -1,32 +1,25 @@
-import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-import User from "./models/login.js";
-import jwt from 'jsonwebtoken'
-import bcrypt from "bcrypt";
-import Cookies from "js-cookie";
+import express from 'express';
+import { JsonWebTokenError } from 'jsonwebtoken'; 
+import User from '../models/login';
+const bcrypt = require("bcrypt");
 
-const app = express();
-const port = 5001;
+const router = express.Router();
 
-app.use(cors());
-app.use(express.json());
-
-mongoose.connect("mongodb://localhost:27017/")
-.then(() => {
-    console.log("Connected to database");
-})
-
-import passwordRouter from './routes/passwords.js'
-app.use('/password', passwordRouter);
-
-app.get('/', async(req, res) => {
-    const users = User.find;
-    console.log(users);
-})
-
-app.post('/register', async(req, res) => {
+router.get("/", async(req, res) => {
     try {
+        res.status(200).json({message: "This is a reply"});
+        console.log("It got to try ")
+    }
+    catch (err) {
+        res.status(400).json({message: "Something went wrong"});
+        console.log("It got to catch")
+    }
+   
+})
+
+router.post('/register', async(req, res) => {
+    try {
+        console.log(bcrypt);
         const username = req.body.username;
         const password = req.body.password;
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,25 +33,26 @@ app.post('/register', async(req, res) => {
     }
 })
 
-app.post('/login', async(req, res) => {
+router.post('/login', async(req, res) => {
     try {
         const username = req.body.username;
         const password = req.body.password;
 
         const user = await User.findOne({username: username});
+        
         if (!user) {
             res.status(400).json({message: "User not found"})
             return;
         }
         
-        console.log(`${user.password} is user password`)
         const checkIfMatch = await bcrypt.compare(password, user.password);
-        console.log(checkIfMatch);
+
         if (!checkIfMatch) {
             res.status(400).json({message: "Password is incorrect"});
             return;
         }
-        const token = jwt.sign({userId: user._id}, "eg_secret", {expiresIn: "1h"});
+
+        const token = JsonWebTokenError.sign({userId: user._id}, "eg_secret", {expiresIn: "1h"});
         res.json({token});
     }
     catch (err) {
@@ -66,8 +60,4 @@ app.post('/login', async(req, res) => {
     }
 })
 
-
-
-app.listen(port, (req, res) => {
-    console.log(`Server listening on port ${port}`);
-})
+export default LoginRegisterRouter;

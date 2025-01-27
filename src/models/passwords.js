@@ -1,8 +1,13 @@
 import mongoose from "mongoose";
-mongoose.connect('mongodb://localhost:27017/');
+    mongoose.connect('mongodb://localhost:27017/');
 
 const passwordSchema = new mongoose.Schema({
 
+    owner: {
+        type:String,
+        required:true,
+        unique: true
+    },
     
     website: {
         name: {

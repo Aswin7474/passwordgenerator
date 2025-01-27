@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import PasswordGenerator from "./passwordGenerator";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 
 function Sidebar() {
@@ -10,6 +12,8 @@ function Sidebar() {
     const [passOb, setPassOb] = useState({});
     const [genPassword, setGenPassword] = useState("");
     const [trigger, setTrigger] = useState(1);
+    const [currentUser, setCurrentUser] = useState(Cookies.get('username') ? Cookies.get('username'): null)
+    const navigate = useNavigate();
 
     const [newEntry, setNewEntry] = useState({ }) 
 
@@ -20,7 +24,8 @@ function Sidebar() {
     const addDialogRef = useRef(null);
 
     useEffect(() => {
-        axios.get('http://localhost:5001/password')
+        console.log(currentUser)
+        axios.get(`http://localhost:5001/password/${currentUser}`)
         .then((data) => {
             setPassOb(data.data)
             console.log(JSON.stringify(data.data))
@@ -54,6 +59,7 @@ function Sidebar() {
         console.log("we got here");
 
         axios.post('http://localhost:5001/password', {
+            owner: currentUser,
             website: {
                 name: website
             },
@@ -123,6 +129,11 @@ function Sidebar() {
         setEditBoxData({...editBoxData, [event.target.name]: event.target.value})
     }
     
+    const handleLogout = (event) => {
+        Cookies.remove('username');
+        navigate('/login')
+    }
+    
     return (
         <div className="container">
             <aside className='sidebar'>
@@ -136,7 +147,9 @@ function Sidebar() {
 
 
             <div className="main">
-                <div id="onefr">a whole load of nothing</div>
+                <div id="onefr">a whole load of nothing
+                    <button onClick={handleLogout}>Logout</button>
+                </div>
                 
                 <div id="threefr">
                     <div id="stuff">

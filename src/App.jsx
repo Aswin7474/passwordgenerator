@@ -1,16 +1,23 @@
-import { useState } from 'react'
 import './App.css'
 import Sidebar  from './sidebar'
-import Passwords from './main_content'
+import Register from './Register'
+import Login from './Login'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 function App() {
 
   return (
-    <div>
-      <Sidebar />
+    <div className="App">
+      <Router>
+        <Routes>
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register /> } />
+          <Route path='/' element={<Sidebar />} />
+        </Routes>
+      </Router>
     </div>
   )
 }
 
-export default App
+export default App;

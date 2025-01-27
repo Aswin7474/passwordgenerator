@@ -3,14 +3,13 @@ const router = express.Router();
 import Passwords from '../models/passwords.js';
 
 
-router.get('/:id', getEntry, async (req, res) => {
-    res.send(res.entry.username);
-})
 
 
-router.get('/', async (req, res) => {
+router.get('/:username', async (req, res) => {
+    console.log("did we get here")
+    console.log(req.params.username);
     try {
-        const passwords = await Passwords.find();
+        const passwords = await Passwords.find({owner: req.params.username});
         res.json(passwords);
     }
     catch (err) {
@@ -20,6 +19,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const password = new Passwords({
+        owner: req.body.owner,
         website: req.body.website,
         username: req.body.username,
         password: req.body.password,

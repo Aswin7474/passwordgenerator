@@ -6,7 +6,8 @@ import Cookies from "js-cookie";
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [token, setToken] = useState(null);
+    const [passwordOrText, setPasswordOrText] = useState("password");
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = (event) => {
@@ -27,15 +28,30 @@ function Login() {
         })
     }
 
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
+        if (showPassword === false) {
+            setPasswordOrText('text');
+        }
+        else {
+            setPasswordOrText('password');
+        }
+    }
+
     return (
-        <div>
-            <form onSubmit={handleLogin}>
-                <input placeholder="Username" id="username" type="text" onChange={(event) => setUsername(event.target.value)} />
-                <br></br>
-                <input placeholder="Password" id="password" onChange={(event) => setPassword(event.target.value)} />
-                <br></br>
-                <button type='submit'>Register</button>
-            </form>
+        <div id="registerloginPage" >
+            <div id="registerloginBox" >
+                <form onSubmit={handleLogin}>
+                    <label for="username">Enter Username</label>
+                    <input placeholder="Username" id="username" type="text" onChange={(event) => setUsername(event.target.value)} />
+                    <br></br>
+                    <label for="password">Enter Password</label>
+                    <input placeholder="Password" id="password" type={passwordOrText} onChange={(event) => setPassword(event.target.value)} />
+                    <span><input type="checkbox" checked={showPassword} onChange={handleShowPassword} /> Show Password </span>
+                    <br></br>
+                    <button type='submit'>Login</button>
+                </form>
+            </div>
         </div>
     )
 }

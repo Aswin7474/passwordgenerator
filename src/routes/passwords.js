@@ -2,9 +2,6 @@ import express from 'express';
 const router = express.Router();
 import Passwords from '../models/passwords.js';
 
-
-
-
 router.get('/:username', async (req, res) => {
     console.log("did we get here")
     console.log(req.params.username);

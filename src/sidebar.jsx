@@ -28,11 +28,11 @@ function Sidebar() {
         console.log('we here')
         axios.get(`http://localhost:5001/password/${currentUser}`)
         .then((data) => {
-            console.log(data);
             setPassOb(data.data)
             console.log(JSON.stringify(data.data))
-            console.log(`passob: ${passOb}`)
+            console.log(`passob: ${JSON.stringify(passOb)}`)
         })
+        .then(() => console.log(passOb.length))
         .catch((error) => console.error(error));
 
         
@@ -84,7 +84,7 @@ function Sidebar() {
 
     const deletePassword = (value) => {
         console.log(value)
-        axios.delete(`http://localhost:5001/password/${value}`)
+        axios.delete(`http://localhost:5001/password/${currentUser}/${value}`)
         .then((data) => {
             console.log(data);
             setTrigger((prev) => !prev);
@@ -104,16 +104,13 @@ function Sidebar() {
     }
 
     const ChangeEditData = (target_id) => {
-        setEditBoxData(passOb.find((item) => item._id === target_id));
-        console.log(editBoxData);
-
-
+        setEditBoxData(passOb[0]['websites'].find((item) => item._id === target_id));
     }
 
     const editDetails = (event) => {
         event.preventDefault();
-        axios.patch(`http://localhost:5001/password/${editBoxData._id}`, {
-            website: editBoxData.website,
+        axios.patch(`http://localhost:5001/password/${currentUser}/${editBoxData._id}`, {
+            website: {name: editBoxData.website},
             username: editBoxData.username,
             password: editBoxData.password
         })
@@ -129,6 +126,8 @@ function Sidebar() {
     const handleNewDetails = (event) => {
         setNewDetails({...newDetails, [event.target.name]: event.target.value})
         setEditBoxData({...editBoxData, [event.target.name]: event.target.value})
+        console.log(editBoxData);
+        console.log(newDetails)
     }
     
     const handleLogout = (event) => {
@@ -234,7 +233,7 @@ function Sidebar() {
                             <div className="editbox">
                                 <form onSubmit={editDetails}>
                                     <h3>Website</h3>
-                                    <input id='websitebox' name = "website" value={editBoxData ? editBoxData.website.name: ""} onChange={handleNewDetails} />
+                                    <input id='websitebox' name = "website" value={editBoxData ? editBoxData.name: ""} onChange={handleNewDetails} />
                                     <br></br>
                                     <h3>Username</h3>
                                     <input id='usernamebox' name="username" value={editBoxData ? editBoxData.username: ""} onChange={handleNewDetails} />

@@ -52,8 +52,8 @@ router.post('/', async(req, res) => {
 
 
 router.patch('/:owner/:websiteId', async (req, res) => {
-    const owner = req.params.owner;
-    const websiteId = req.params.websiteId;
+    const { owner, websiteId } = req.params;
+    console.log(`websiteid: ${websiteId}`)
 
     try {
         const user = await Passwords.findOne({owner});
@@ -61,15 +61,30 @@ router.patch('/:owner/:websiteId', async (req, res) => {
         const website = user.websites.id(websiteId);
 
         if (!website) {
-            res.json({message: "Website not found"});
+            return res.json({message: "Website not found"});
         }
 
-        website.name = req.body.website.name;
-        website.username = req.body.username;
-        website.password = req.body.password;
+        console.log(website)
 
+        console.log(req.body.website.name, req.body.username, req.body.password)
+
+        if (req.body.website?.name != null) {
+            website.name = req.body.website.name;
+        }
+        if (req.body.website?.url != null) {
+            website.url = req.body.website.url;
+        }
+        if (req.body.username != null) {
+            website.username = req.body.username;
+        }
+        if (req.body.password != null) {
+            website.password = req.body.password;
+        }
+
+        // Save the updated user document
         await user.save();
-        res.json({message: "Succesfully updated"})
+
+        res.json({ message: 'Successfully updated website' })
     }
     catch(err) {
         console.error(err);

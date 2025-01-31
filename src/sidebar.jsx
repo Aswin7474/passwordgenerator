@@ -25,12 +25,17 @@ function Sidebar() {
 
     useEffect(() => {
         console.log(currentUser)
+        console.log('we here')
         axios.get(`http://localhost:5001/password/${currentUser}`)
         .then((data) => {
+            console.log(data);
             setPassOb(data.data)
             console.log(JSON.stringify(data.data))
+            console.log(`passob: ${passOb}`)
         })
         .catch((error) => console.error(error));
+
+        
 
         
     }, [trigger]);
@@ -72,11 +77,8 @@ function Sidebar() {
         })
         .catch((error) => console.error(error));
 
-        // setUsername("")
-        // setPassword("");
-        // setWebsite("");
-        
         console.log(`trigger: ${trigger}`);
+        
         
     }
 
@@ -206,18 +208,26 @@ function Sidebar() {
                                     <th>Password</th>
                                     
                                 </tr>
+
+                                {passOb[0]?.websites?.map((website) => (
+                                    <tr id="passwordSmallBoxes" key={website._id}>
+                                        <th>{website.name}</th>
+                                        <th>{website.username}</th>
+                                        <th>{website.password}</th>  
+                                        <th>
+                                            <button onClick={() => { ChangeEditData(website._id); editDialogRef?.current?.showModal(); }}>
+                                                Edit
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button onClick={() => { deletePassword(website._id); }}>
+                                                Delete
+                                            </button>
+                                        </th>
+                                    </tr>
+                                ))} 
                         
-                        {Object.entries(passOb).map(([key, value]) => (
-                            
-                                <tr id='passwordSmallBoxes'>
-                                    <th>{value.website.name}</th>
-                                    <th>{value.username}</th>
-                                    <th>{value.password}</th> 
-                                    <th><button onClick={() => {ChangeEditData(value._id); editDialogRef?.current?.showModal()}}>Edit</button></th>
-                                    <th><button onClick={() => {deletePassword(value._id)}} >Delete</button></th>
-                                </tr>
-                           
-                        ))}
+                        
                         </table>
                         
                         <dialog ref={editDialogRef} >

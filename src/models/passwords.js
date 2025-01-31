@@ -6,10 +6,10 @@ const passwordSchema = new mongoose.Schema({
     owner: {
         type:String,
         required:true,
-        unique: true
+        unique: false
     },
     
-    website: {
+    websites: [{ 
         name: {
             type: String,
             required: true
@@ -17,23 +17,20 @@ const passwordSchema = new mongoose.Schema({
         url: {
             type: String,
             required: false
+        },
+        username: {
+            type: String,
+            required: true
+        },
+        password: {
+            type: String,
+            required: true
+        },
+        passwordDate: {
+            type: Date,
+            default: Date.now
         }
-    },
-
-    username: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-
-    passwordDate: {
-        type: Date,
-        required: false,
-        default : Date.now
-    }
+    }]
 });
 
 const Passwords = mongoose.model('Passwords', passwordSchema); 

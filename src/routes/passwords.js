@@ -14,77 +14,106 @@ router.get('/:username', async (req, res) => {
     }
 })
 
-router.post('/', async (req, res) => {
-    const password = new Passwords({
-        owner: req.body.owner,
-        website: req.body.website,
-        username: req.body.username,
-        password: req.body.password,
-    })
+
+router.post('/', async(req, res) => {
+
+    const user = await Passwords.findOne({owner: req.body.owner})
+    console.log(user)
 
     try {
-        const newPassword = await password.save();
-        res.status(201).json(newPassword);
-    }
-    catch(err) {
-        res.status(400).json({message: err.message})
-    }
-})
+        if (!user) {
+            const password = new Passwords({
+                owner: req.body.owner,
+                websites: {
+                    name: req.body.website.name,
+                    username: req.body.username,
+                    password: req.body.password
+                }
+            })
+            const newPassword = await password.save();
+            res.status(201).json(newPassword);
+        }
+        else {
+            user.websites.push({
+                name: req.body.website.name,
+                username: req.body.username,
+                password: req.body.password
+            });
 
-
-router.patch('/:id', getEntry, async (req, res) => {
-    if (req.body.website != null) {
-        res.entry.website = req.body.website;
-    }
-    if (req.body.username != null) {
-        res.entry.username = req.body.username;
-    }
-    if (req.body.password != null) {
-        res.entry.password = req.body.password;
-    }
-
-    try {
-        const updatedEntry = await res.entry.save();
-        console.log(updatedEntry);
-        res.json(updatedEntry);
-    }
-    catch (err) {
-        console.error(err);
-    }
-    
-})
-
-router.delete('/:id', getEntry, async (req, res) => {
-    try {
-        //console.log(res.entry)
-        await res.entry.deleteOne() ;
-        res.json({message: "Successfully deleted"});
-    }
-    catch (err) {
-        res.status(404).json({message: "something went wrong in delete"})
-        console.error(err);
-    }
-
-    
-})
-
-async function getEntry(req, res, next) {
-    let entry;
-    try {
-        entry = await Passwords.findById(req.params.id);
-        
-        if (entry == null) {
-            return res.status(404).json({message: 'Cannot find entry'});
+            await user.save();
+            return res.status(201).json(user);
         }
     }
-    catch {
-        return res.status(500).json({message: "Something went wrong in getEntry"});
+    catch(err) {
+        res.status(400).json({message: err.message});
     }
 
-    console.log(entry);
-    res.entry = entry;
-    next()
-}
+})
+
+
+router.patch('/:owner/:websiteId', async (req, res) => {
+    const owner = req.params.owner;
+    const websiteId = req.params.websiteId;
+
+    try {
+        const user = await Passwords.findOne({owner});
+
+        const website = user.websites.id(websiteId);
+
+        if (!website) {
+            res.json({message: "Website not found"});
+        }
+
+        website.name = req.body.website.name;
+        website.username = req.body.username;
+        website.password = req.body.password;
+
+        await user.save();
+        res.json({message: "Succesfully updated"})
+    }
+    catch(err) {
+        console.error(err);
+        res.json({message: "Something went wrong in updating"});
+    }
+    
+})
+
+router.delete('/:owner/:websiteId', async (req, res) => {
+    try {
+        const owner = req.params.owner;
+        const websiteId = req.params.websiteId;
+
+        let user = await Passwords.findOne({ owner });
+
+        if (!user) {
+            return res.status(404).json({message: "User not found"});
+        }
+
+        const initialLength = user.websites.length;
+        user.websites = user.websites.filter((site) => site._id.toString() !== websiteId);
+
+        if (user.websites.length === initialLength) {
+            return res.status(404).json({message: "Website not found"});
+        }
+
+        if (user.websites.length === 0) {
+            await Passwords.deleteOne({owner});
+            return res.json({message: "User deleted since no more remaining websites"});
+        }
+        else {
+            await user.save();
+            return res.json({message: "Website succesfully deleted"})
+        }
+    }
+    catch(err) {
+        console.log('error at line 123');
+        console.error(err);
+        res.status(500).json({ message: "Something went wrong while deleting" });
+    }
+
+    
+})
+
 
 
 export default router;

@@ -14,6 +14,7 @@ function Sidebar() {
     const [trigger, setTrigger] = useState(1);
     const [currentUser, setCurrentUser] = useState(Cookies.get('username') ? Cookies.get('username'): null)
     const navigate = useNavigate();
+    const [formStatus, setFormStatus] = useState(false);
 
     const [newEntry, setNewEntry] = useState({ }) 
 
@@ -33,11 +34,7 @@ function Sidebar() {
             console.log(`passob: ${JSON.stringify(passOb)}`)
         })
         .then(() => console.log(passOb.length))
-        .catch((error) => console.error(error));
-
-        
-
-        
+        .catch((error) => console.error(error));     
     }, [trigger]);
 
     const [settings, setSettings] = useState({
@@ -134,6 +131,19 @@ function Sidebar() {
         Cookies.remove('username');
         navigate('/login')
     }
+
+    const changeForm = (event) => {
+        setFormStatus(!formStatus)
+    }
+
+    const clearForm = () => {
+        setUsername('');
+        setPassword('');
+        setWebsite('');
+
+        console.log("after clearform");
+        console.log(username, password, website);
+    }
     
     return (
         <div className="container">
@@ -148,7 +158,7 @@ function Sidebar() {
 
 
             <div className="main">
-                <div id="onefr">a whole load of nothing
+                <div id="onefr">
                     <button onClick={handleLogout}>Logout</button>
                 </div>
                 
@@ -196,7 +206,14 @@ function Sidebar() {
 
 
                         <div className="new_button">
-                            <button onClick={() => {addDialogRef?.current?.showModal()}} >New</button>
+                            <button onClick={() => 
+                            
+                            {
+                                clearForm();
+                                addDialogRef?.current?.showModal();
+                                
+                            }
+                        } >New</button>
                         </div>
                     </div>
                     <div id="passwordtable">
@@ -241,7 +258,7 @@ function Sidebar() {
                                     <h3>Password</h3>
                                     <input id='passwordbox' name='password' value={editBoxData ? editBoxData.password: ""} onChange={handleNewDetails} />
                                     <br></br>
-                                    <button onClick={() => editDialogRef?.current?.close() }>Cancel</button>
+                                    <button type="button" onClick={() => editDialogRef?.current?.close() }>Cancel</button>
                                     <button type="submit" onClick={() => editDialogRef?.current?.close()}>Save Changes</button>
                                 </form>
                             </div>
@@ -250,16 +267,45 @@ function Sidebar() {
                         <dialog ref={addDialogRef}>
                             <div className="editbox">
                                 <form onSubmit={addPassword}>
-                                    <input type="text" placeholder="website" onChange={(event) => setWebsite(event.target.value)} />
+                                    <input type="text" placeholder="website" value={website} onChange={(event) => setWebsite(event.target.value)} />
                                     <br></br>
-                                    <input type="text" placeholder="username" onChange={(event) => setUsername(event.target.value)} />
+                                    <input type="text" placeholder="username" value={username} onChange={(event) => setUsername(event.target.value)} />
                                     <br></br>
-                                    <input type="text" placeholder="password" value={genPassword ? genPassword : ""} onChange={(event) => setPassword(event.target.value)} />
-                                    <button type="button" onClick={generatePassword} >Generate Password</button>
+                                    <input type="text" placeholder="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                                    <button  onClick={generatePassword} >Generate Password</button>
+                                    <button type="button" onClick={changeForm} >Change Settings</button>
+
+                                    {formStatus && (<div id="settingsform" >
+                                            <div>
+                                        <input type="range" id="length" name="length" min="0" max="20" value={settings.length} onChange={handleLengthChange} />
+                                        <label for="length">length: {settings.length}</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="small" name="includeSmall" checked={settings.includeSmall} onChange={settingsChange} />
+                                            <label for="small">Include Small Characters</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="caps" name="includeCapital" checked={settings.includeCapital} onChange={settingsChange} />
+                                            <label for="caps">Include Capital Characters</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="special" name="includeSpecial" checked={settings.includeSpecial} onChange={settingsChange} />
+                                            <label for="special">Include Special Characters</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="nums" name="includeNumbers" checked={settings.includeNumbers} onChange={settingsChange} />
+                                            <label for="nums">Include Nums</label>
+                                        </div>
+
+                                    </div>)}
+
+
+
                                     <br></br>
                                     <button onClick={() => {deletePassword(value._id)}}></button>
-                                    <button onClick={() => {addDialogRef?.current?.close(); } }>Cancel</button>
+                                    <button type="button" onClick={() => {addDialogRef?.current?.close(); } }>Cancel</button>
                                     <button type="submit" onClick={() => addDialogRef?.current?.close()} >Submit</button>
+                                
                                 </form>
                             </div>
                         </dialog> 

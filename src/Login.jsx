@@ -42,10 +42,10 @@ function Login() {
         <div id="registerloginPage" >
             <div id="registerloginBox" >
                 <form onSubmit={handleLogin}>
-                    <label for="username">Enter Username</label>
+                    <label id="enterdetails" for="username">Enter Username</label>
                     <input placeholder="Username" id="username" type="text" onChange={(event) => setUsername(event.target.value)} />
                     <br></br>
-                    <label for="password">Enter Password</label>
+                    <label id="enterdetails" for="password">Enter Password</label>
                     <input placeholder="Password" id="password" type={passwordOrText} onChange={(event) => setPassword(event.target.value)} />
                     <span><input type="checkbox" checked={showPassword} onChange={handleShowPassword} /> Show Password </span>
                     <br></br>

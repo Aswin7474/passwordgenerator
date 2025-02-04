@@ -18,11 +18,12 @@
 
 .sidebar {
   background-color: #7E56C2;
-  color: white;
+  color: lightgray;
   left: 0px;
   top: 0;
   height: 100vh;
   width: 20vw;
+  font-size: large;
 }
 
 .s_bar_element {
@@ -46,17 +47,23 @@
 .new_button {
   display: flex;
   height: 2rem;
-  /* flex-direction: row-reverse; */
+  flex-direction: row;
   padding-right: 2vw;
   padding-top: 1vh;
-
+  cursor:pointer;
+  margin-left: 0.5vw;
 }
 
 #onefr {
-  display: flex;
-  flex-direction: row-reverse;
+  /* display: flex; */
+  /* flex-direction: row-reverse; */
+  /* justify-content: flex-end; */
   grid-row: 1;
   /* background-color: orange; */
+  display: grid;
+    grid-template-areas: 
+        "top-left top-right"
+        ". center";
   
 }
 
@@ -82,7 +89,6 @@
   /* background-color: lightblue; */
   /* padding-right: 10vw; */
   padding-left: 5vw;
-  
 }
 
 #passwordSmallBoxes {
@@ -101,16 +107,20 @@ td, th {
 
 
 .editbox {
+
   display: flex;
   position: fixed;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 3vw;
   align-items: center;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 30%;
   height: 50%;
-  background-color: white;
+  background-color: #5A3E9A;
+  color:#ADB0B6;
+  border-radius: 5px;
 }
 
 #registerloginPage {
@@ -119,14 +129,17 @@ td, th {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  background-color: whitesmoke;
+  background-color: #1E2129;
 }
 
 #registerloginBox {
   background-color: white;
+  color:#ADB0B6;
+  font-size: larger;
+  font-weight: 900;
   padding: 20vh;
   border-radius: 30px;
-
+  background-color: #5A3E9A;
 }
 
 
@@ -134,10 +147,119 @@ td, th {
   height: 2.25rem;
   border-radius: 5px;
   width: 100%;
+  font-size: medium;
+  padding-left: 0.5vw;
 }
 
 #registerloginBox input[type=password] {
   height: 2.25rem;
   border-radius: 5px;
   width: 100%;
+  font-size: medium;
+  padding-left: 0.5vw;
+}
+
+#logoutbutton {
+  grid-area: top-right;
+    align-self: start;
+    justify-self: end;
+}
+
+.button {
+  cursor: pointer;
+  width:3.5vw;
+  height:3.5vh;
+  background-color: #7E56C2;
+  border: 1px #7E56C2;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+button:hover {
+  background-color: #5A3E9A;
+}
+
+
+.formbox {
+  margin-bottom: 1.5vh;
+  width: 15vw;
+  height: 4.2vh;
+  font-size: medium;
+  padding-left: 0.6vw;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  margin-right: 1vw;
+}
+
+input {
+  color: #ADB0B6;
+  background-color: #1E2129;
+  border: 1px #7E56C2;
+}
+
+
+#savebutton {
+  padding: 4px;
+  width: auto;
+  margin-left: 0.7vw;
+}
+
+.addbox {
+  display: flex;
+  position: fixed;
+  justify-content: flex-start;
+  padding-left: 3vw;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 35%;
+  height: 60%;
+  background-color: #5A3E9A;
+  color:#ADB0B6;
+  border-radius: 5px;
+}
+
+#passwordsettings {
+  width: 8vw;
+  margin-left: 1vw;
+}
+
+#genpassbutton {
+  cursor: pointer;
+  height:3vh;
+  width:1vw;
+  background-color: unset;
+  border: 1px unset;
+}
+
+#submitbutton {
+  margin-left: 0.7vw;
+}
+
+#settingsform {
+
+}
+
+.setting {
+  margin-bottom: 1.5vh;
+  margin-right: 1vh;
+}
+
+#addpasswordtext {
+  margin-bottom: 2vh;
+}
+
+#edittext {
+  margin-bottom: 2vh;
+}
+
+#greeting {
+  grid-area: center;
+  /* justify-self: center; */
+  justify-content: center;
+}
+
+#enterdetails {
+  margin-bottom: 2vh;
 }

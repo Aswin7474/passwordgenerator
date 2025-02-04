@@ -149,64 +149,26 @@ function Sidebar() {
         <div className="container">
             <aside className='sidebar'>
                 <div className="s_bar_box">
-                    <div className="s_bar_element">BitProtector</div>
-                    <div className="s_bar_element">About</div>
-                    <div className="s_bar_element">Settings</div>
-                    <div className="s_bar_element">Password Generator</div>
+                    <h2 className="s_bar_element">BitProtector</h2>
+                    <h3 className="s_bar_element">About</h3>
+                    <h3 className="s_bar_element">Settings</h3>
                 </div>
             </aside>
 
 
             <div className="main">
                 <div id="onefr">
-                    <button onClick={handleLogout}>Logout</button>
+                    <button className="button" id='logoutbutton' onClick={handleLogout}>Logout</button>
+
+                    <h2 id="greeting" >Welcome {currentUser}!</h2>
+                    
                 </div>
+                
                 
                 <div id="threefr">
                     <div id="stuff">
-                        <form onSubmit={addPassword}>
-                            <input type="text" placeholder="website" onChange={(event) => setWebsite(event.target.value)} />
-                            <input type="text" placeholder="username" onChange={(event) => setUsername(event.target.value)} />
-                            <input type="text" placeholder="password" onChange={(event) => setPassword(event.target.value)} />
-                            <button type="submit">Submit</button>
-                        </form>
-                        <p>FOR RANDOM GEN PASSWORD</p>
-
-                        <form onSubmit={addPassword}>
-                            <input type="text" placeholder="website" onChange={(event) => setWebsite(event.target.value)} />
-                            <input type="text" placeholder="username" onChange={(event) => setUsername(event.target.value)} />
-                            <input type="text" placeholder="password" onChange={(event) => setPassword(PasswordGenerator)} />
-                            <button type="submit">Submit</button>
-                        </form>
-                        <form onSubmit={generatePassword}>
-                            <div>
-                                <input type="range" id="length" name="length" min="0" max="20" value={settings.length} onChange={handleLengthChange} />
-                                <label for="length">length: {settings.length}</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" id="small" name="includeSmall" checked={settings.includeSmall} onChange={settingsChange} />
-                                <label for="small">Include Small Characters</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" id="caps" name="includeCapital" checked={settings.includeCapital} onChange={settingsChange} />
-                                <label for="caps">Include Capital Characters</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" id="special" name="includeSpecial" checked={settings.includeSpecial} onChange={settingsChange} />
-                                <label for="special">Include Special Characters</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" id="nums" name="includeNumbers" checked={settings.includeNumbers} onChange={settingsChange} />
-                                <label for="nums">Include Nums</label>
-                            </div>
-                            <button type="submit" value={genPassword} onClick={generatePassword}>Generate Password</button>
-                        </form>
-
-                        {/* {genPassword.length > 0? (<p>{genPassword}</p>): (<p>{}</p>)} */}
-
-
-                        <div className="new_button">
-                            <button onClick={() => 
+                    <div className="new_button">
+                            <button className="button" onClick={() => 
                             
                             {
                                 clearForm();
@@ -215,7 +177,9 @@ function Sidebar() {
                             }
                         } >New</button>
                         </div>
+
                     </div>
+                    
                     <div id="passwordtable">
                         <table className="passwordBoxes">
                                 <tr>
@@ -231,12 +195,12 @@ function Sidebar() {
                                         <th>{website.username}</th>
                                         <th>{website.password}</th>  
                                         <th>
-                                            <button onClick={() => { ChangeEditData(website._id); editDialogRef?.current?.showModal(); }}>
+                                            <button className="button" onClick={() => { ChangeEditData(website._id); editDialogRef?.current?.showModal(); }}>
                                                 Edit
                                             </button>
                                         </th>
                                         <th>
-                                            <button onClick={() => { deletePassword(website._id); }}>
+                                            <button className="button" onClick={() => { deletePassword(website._id); }}>
                                                 Delete
                                             </button>
                                         </th>
@@ -249,51 +213,53 @@ function Sidebar() {
                         <dialog ref={editDialogRef} >
                             <div className="editbox">
                                 <form onSubmit={editDetails}>
+                                    <h2 id="edittext" >Edit</h2>
                                     <h3>Website</h3>
-                                    <input id='websitebox' name = "website" value={editBoxData ? editBoxData.name: ""} onChange={handleNewDetails} />
+                                    <input className="formbox" id='websitebox' name = "website" value={editBoxData ? editBoxData.name: ""} onChange={handleNewDetails} />
                                     <br></br>
                                     <h3>Username</h3>
-                                    <input id='usernamebox' name="username" value={editBoxData ? editBoxData.username: ""} onChange={handleNewDetails} />
+                                    <input className="formbox" id='usernamebox' name="username" value={editBoxData ? editBoxData.username: ""} onChange={handleNewDetails} />
                                     <br></br>
                                     <h3>Password</h3>
-                                    <input id='passwordbox' name='password' value={editBoxData ? editBoxData.password: ""} onChange={handleNewDetails} />
+                                    <input className="formbox" id='passwordbox' name='password' value={editBoxData ? editBoxData.password: ""} onChange={handleNewDetails} />
                                     <br></br>
-                                    <button type="button" onClick={() => editDialogRef?.current?.close() }>Cancel</button>
-                                    <button type="submit" onClick={() => editDialogRef?.current?.close()}>Save Changes</button>
+                                    <button className="button" type="button" onClick={() => editDialogRef?.current?.close() }>Cancel</button>
+                                    <button className="button" id="savebutton" type="submit" onClick={() => editDialogRef?.current?.close()}>Save Changes</button>
                                 </form>
                             </div>
                         </dialog>
 
                         <dialog ref={addDialogRef}>
-                            <div className="editbox">
+                            <div className="addbox">
                                 <form onSubmit={addPassword}>
-                                    <input type="text" placeholder="website" value={website} onChange={(event) => setWebsite(event.target.value)} />
+                                    <h2 id="addpasswordtext">Add Password</h2>
+                                    <input type="text" className="formbox"  placeholder="website" value={website} onChange={(event) => setWebsite(event.target.value)} />
                                     <br></br>
-                                    <input type="text" placeholder="username" value={username} onChange={(event) => setUsername(event.target.value)} />
+                                    <input type="text" className="formbox" placeholder="username" value={username} onChange={(event) => setUsername(event.target.value)} />
                                     <br></br>
-                                    <input type="text" placeholder="password" value={password} onChange={(event) => setPassword(event.target.value)} />
-                                    <button  onClick={generatePassword} >Generate Password</button>
-                                    <button type="button" onClick={changeForm} >Change Settings</button>
+                                    <input type="text" className="formbox" placeholder="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                                    <button onClick={generatePassword} ><img title="Generate Password" src="/reload.jpg" id="genpassbutton" ></img></button>
+                                    <button  className="button"  type="button" id="passwordsettings" onClick={changeForm} >Change Settings</button>
 
                                     {formStatus && (<div id="settingsform" >
                                             <div>
-                                        <input type="range" id="length" name="length" min="0" max="20" value={settings.length} onChange={handleLengthChange} />
-                                        <label for="length">length: {settings.length}</label>
+                                        <input type="range" className="setting" id="length" name="length" min="0" max="20" value={settings.length} onChange={handleLengthChange} />
+                                        <label id="lengthbox" for="length">length: {settings.length}</label>
                                         </div>
                                         <div>
-                                            <input type="checkbox" id="small" name="includeSmall" checked={settings.includeSmall} onChange={settingsChange} />
+                                            <input type="checkbox" className="setting" id="small" name="includeSmall" checked={settings.includeSmall} onChange={settingsChange} />
                                             <label for="small">Include Small Characters</label>
                                         </div>
                                         <div>
-                                            <input type="checkbox" id="caps" name="includeCapital" checked={settings.includeCapital} onChange={settingsChange} />
+                                            <input type="checkbox" className="setting" id="caps" name="includeCapital" checked={settings.includeCapital} onChange={settingsChange} />
                                             <label for="caps">Include Capital Characters</label>
                                         </div>
                                         <div>
-                                            <input type="checkbox" id="special" name="includeSpecial" checked={settings.includeSpecial} onChange={settingsChange} />
+                                            <input type="checkbox" className="setting" id="special" name="includeSpecial" checked={settings.includeSpecial} onChange={settingsChange} />
                                             <label for="special">Include Special Characters</label>
                                         </div>
                                         <div>
-                                            <input type="checkbox" id="nums" name="includeNumbers" checked={settings.includeNumbers} onChange={settingsChange} />
+                                            <input type="checkbox" className="setting" id="nums" name="includeNumbers" checked={settings.includeNumbers} onChange={settingsChange} />
                                             <label for="nums">Include Nums</label>
                                         </div>
 
@@ -302,9 +268,9 @@ function Sidebar() {
 
 
                                     <br></br>
-                                    <button onClick={() => {deletePassword(value._id)}}></button>
-                                    <button type="button" onClick={() => {addDialogRef?.current?.close(); } }>Cancel</button>
-                                    <button type="submit" onClick={() => addDialogRef?.current?.close()} >Submit</button>
+
+                                    <button className="button" type="button" onClick={() => {addDialogRef?.current?.close(); } }>Cancel</button>
+                                    <button className="button" id="submitbutton" type="submit" onClick={() => addDialogRef?.current?.close()} >Submit</button>
                                 
                                 </form>
                             </div>

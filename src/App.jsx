@@ -1,4 +1,3 @@
-import './App.css'
 import Sidebar  from './sidebar'
 import Register from './Register'
 import Login from './Login'

@@ -6,19 +6,24 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 function Sidebar() {
+    const lightMode = ['#165ad5', '#ffffff', "#333333", "#FFFFFF", "#19138f", "#FFFFFF"];
+    const darkMode = ['#7E56C2', '#1E2129', "#ADB0B6", "#000000", "#5A3E9A", '#1E2129'];
+    
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [website, setWebsite] = useState("");
-    const [passOb, setPassOb] = useState({});
-    const [genPassword, setGenPassword] = useState("");
+    const [passObject, setPassObject] = useState({});
     const [trigger, setTrigger] = useState(1);
-    const [currentUser, setCurrentUser] = useState(Cookies.get('username') ? Cookies.get('username'): null)
     const navigate = useNavigate();
     const [formStatus, setFormStatus] = useState(false);
+    const [settings, setSettings] = useState({
+        length: 14, includeSmall: true, includeCapital: true, includeNumbers: true, includeSpecial: true
+    });
+    const currentUser = Cookies.get('username') ? Cookies.get('username'): null
 
     const [editBoxData, setEditBoxData] = useState(null);
     const [newDetails, setNewDetails] = useState({website: "", username: "", password: ""})
-    const [themeColors, setThemeColors] = useState(['#7E56C2', '#1E2129', "#ADB0B6", "#000000", "#5A3E9A", '#1E2129']);
+    const [themeColors, setThemeColors] = useState(darkMode);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 7;
@@ -28,44 +33,38 @@ function Sidebar() {
 
     const [displayedWebsites, setDisplayedWebsites] = useState([])
     const [startIndex, setStartIndex] = useState(1);
-
-    let themecolors = ['#7E56C2', '7E56C2'];
-    const lightTheme = ['#165ad5', '#ffffff'];
-    const darkTheme = ['#7E56C2', '7E56C2'];
     
-
+    // Retrieves passwords for current user from api
     useEffect(() => {
         if (currentUser === null) {
             navigate('/login');
         }
         axios.get(`http://localhost:5001/password/${currentUser}`)
         .then((data) => {
-            setPassOb(data.data)
-            console.log(JSON.stringify(data.data))
-            // console.log(passOb[0].websites.length)
+            setPassObject(data.data)
+            // console.log(JSON.stringify(data.data))
         })
         .then(() => {
-            console.log("we here")
-            console.log(passOb)
-            const websites = passOb[0]?.websites || [];
+            const websites = passObject[0]?.websites || [];
             setStartIndex((currentPage - 1) * itemsPerPage);
             setDisplayedWebsites(websites.slice(startIndex, startIndex + itemsPerPage));
             setTotalPages(Math.ceil(websites.length / itemsPerPage));
         })
-        .then(() => {
-            console.log(displayedWebsites)
-        })
-        // .then(() => console.log(passOb.length))
         .catch((error) => console.error(error));     
     }, [trigger]);
 
 
-    
+    // Properly display users when pages change
+    useEffect(() => {
+        setStartIndex((currentPage - 1) * itemsPerPage);
+        console.log(`currentPage: ${currentPage}`)
+        const websites = passObject[0]?.websites || [];
+        setDisplayedWebsites(websites.slice(startIndex, startIndex + itemsPerPage));
+        console.log(websites.slice(startIndex, startIndex + itemsPerPage))
+        setTotalPages(Math.ceil(websites.length / itemsPerPage))
+    }, [startIndex, currentPage, passObject]);  
 
-    const [settings, setSettings] = useState({
-        length: 14, includeSmall: true, includeCapital: true, includeNumbers: true, includeSpecial: true
-    });
-
+    // helper function that sets the settings for randomly generated password
     const settingsChange = (event) => {
         setSettings((prevSettings) => ({
             ...prevSettings,
@@ -73,17 +72,17 @@ function Sidebar() {
         }))
     }
 
+    // helper function that handles length changes in randomly generated password
     const handleLengthChange = (event) => {
         setSettings((prevSettings) => ({
             ...prevSettings,
             [event.target.name]: event.target.value
         }))
-        // console.log(settings.length);
     }
 
+    // adds a new password to server
     const addPassword = (event) => {
         event.preventDefault();
-        // console.log("we got here");
 
         axios.post('http://localhost:5001/password', {
             owner: currentUser,
@@ -94,18 +93,13 @@ function Sidebar() {
             password: password
         })
         .then(() => {
-            // console.log("Successfully inserted new entry");
             setTrigger((prev) => !prev);
         })
-        .catch((error) => console.error(error));
-
-        // console.log(`trigger: ${trigger}`);
-        
-        
+        .catch((error) => console.error(error));    
     }
 
+    // deletes password on server
     const deletePassword = (value) => {
-        // console.log(value)
         axios.delete(`http://localhost:5001/password/${currentUser}/${value}`)
         .then((data) => {
             // console.log(data);
@@ -117,18 +111,19 @@ function Sidebar() {
         
     }
 
+    // calls and sets randomly generated password with requested settings
     const generatePassword = (event) => {
         event.preventDefault();
         const newPass = PasswordGenerator(settings)
-        setGenPassword(newPass)
         setPassword(newPass);
-        // console.log(password);
     }
 
+    // handles changes to when user edits password details
     const ChangeEditData = (target_id) => {
-        setEditBoxData(passOb[0]['websites'].find((item) => item._id === target_id));
+        setEditBoxData(passObject[0]['websites'].find((item) => item._id === target_id));
     }
 
+    // updates password details on server
     const editDetails = (event) => {
         event.preventDefault();
         axios.patch(`http://localhost:5001/password/${currentUser}/${editBoxData._id}`, {
@@ -145,13 +140,13 @@ function Sidebar() {
         
     }
 
+    // helper function that updates input boxes
     const handleNewDetails = (event) => {
-        setNewDetails({...newDetails, [event.target.name]: event.target.value})
-        setEditBoxData({...editBoxData, [event.target.name]: event.target.value})
-        console.log(editBoxData);
-        console.log(newDetails)
-    }
+        setNewDetails({...newDetails, [event.target.name]: event.target.value});
+        setEditBoxData({...editBoxData, [event.target.name]: event.target.value});
+    };
     
+    // Clears user cookie and logs out user
     const handleLogout = (event) => {
         Cookies.remove('username');
         navigate('/login')
@@ -161,45 +156,26 @@ function Sidebar() {
         setFormStatus(!formStatus)
     }
 
+    // Cleares username, password, and website input boxes
     const clearForm = () => {
         setUsername('');
         setPassword('');
         setWebsite('');
-
-        // console.log("after clearform");
-        // console.log(username, password, website);
     }
 
+    // Handles changes in themes
     const handleThemeChange = () => {
         setThemeColors(prevColors => {
-            // console.log(`Before change: ${prevColors}`);
             const newColors = prevColors[0] === '#7E56C2'  // if dark mode
-                ? ['#165ad5', '#ffffff', "#333333", "#FFFFFF", "#19138f", "#FFFFFF"] // switch to light mode
-                : ['#7E56C2', '#1E2129', "#ADB0B6", "#000000", "#5A3E9A", '#1E2129']; // switch to dark mode
-            
-            // console.log(`After change: ${newColors}`);
+                ? lightMode // switch to light mode
+                : darkMode; // switch to dark mode
+
             return newColors;
         });
     };
 
-    useEffect(() => {
-        console.log(`Updated themeColors: ${themeColors}`);
-    }, [themeColors]);
-
-    useEffect(() => {
-        
-        setStartIndex((currentPage - 1) * itemsPerPage);
-        console.log(`currentPage: ${currentPage}`)
-        const websites = passOb[0]?.websites || [];
-        // console.log(`right here baby ${JSON.stringify(websites)}`)
-        setDisplayedWebsites(websites.slice(startIndex, startIndex + itemsPerPage));
-        console.log(websites.slice(startIndex, startIndex + itemsPerPage))
-        setTotalPages(Math.ceil(websites.length / itemsPerPage))
-    }, [startIndex, currentPage, passOb])
-    
-
-
-    if (passOb && !displayedWebsites) return <p>Loading...</p>;
+    // if api data is not fetched, showing loading screen
+    if (passObject && !displayedWebsites) return <p>Loading...</p>;
     
     return (
         <div className="container" style={{color: themeColors[2]}} >
@@ -213,12 +189,10 @@ function Sidebar() {
 
             <div className="main" style={{backgroundColor: themeColors[1]}}>
                 <div id="onefr">
-                    {/* <button ><img id="sunmoon" src="sun2.png" ></img></button> */}
                     <button style={{backgroundColor: themeColors[0], color: themeColors[3]}} className="button" id="themebutton" onClick={handleThemeChange} >Change Theme</button>
                     <button style={{backgroundColor: themeColors[0], color: themeColors[3]}} className="button" id='logoutbutton' onClick={handleLogout}>Logout</button>
 
                     <h2 id="greeting" >Welcome {currentUser}!</h2>
-                    
                 </div>
                 
                 
@@ -333,21 +307,16 @@ function Sidebar() {
                             </div>
                         </dialog> 
                         <div style={{ marginTop: "10px", textAlign: "center" }}>
-                <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-                    Prev
-                </button>
-                <span> Page {currentPage} of {totalPages} </span>
-                <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-                    Next
-                </button>
-            </div>
-
-                                            
+                            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                                        Prev
+                            </button>
+                            <span> Page {currentPage} of {totalPages} </span>
+                            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                                Next
+                            </button>
+                        </div>                        
                     </div>
-                    
-
                 </div>
-
             </div>
         </div>
     )

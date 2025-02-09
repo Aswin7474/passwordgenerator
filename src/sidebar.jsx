@@ -19,13 +19,20 @@ function Sidebar() {
     const [editBoxData, setEditBoxData] = useState(null);
     const [newDetails, setNewDetails] = useState({website: "", username: "", password: ""})
     const [themeColors, setThemeColors] = useState(['#7E56C2', '#1E2129', "#ADB0B6", "#000000", "#5A3E9A", '#1E2129']);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const itemsPerPage = 7;
 
     const editDialogRef = useRef(null);
     const addDialogRef = useRef(null);
 
+    const [displayedWebsites, setDisplayedWebsites] = useState([])
+    const [startIndex, setStartIndex] = useState(1);
+
     let themecolors = ['#7E56C2', '7E56C2'];
     const lightTheme = ['#165ad5', '#ffffff'];
     const darkTheme = ['#7E56C2', '7E56C2'];
+    
 
     useEffect(() => {
         if (currentUser === null) {
@@ -34,13 +41,26 @@ function Sidebar() {
         axios.get(`http://localhost:5001/password/${currentUser}`)
         .then((data) => {
             setPassOb(data.data)
-            console.log(themeColors)
-            // console.log(JSON.stringify(data.data))
-            // console.log(`passob: ${JSON.stringify(passOb)}`)
+            console.log(JSON.stringify(data.data))
+            // console.log(passOb[0].websites.length)
+        })
+        .then(() => {
+            console.log("we here")
+            console.log(passOb)
+            const websites = passOb[0]?.websites || [];
+            setStartIndex((currentPage - 1) * itemsPerPage);
+            setDisplayedWebsites(websites.slice(startIndex, startIndex + itemsPerPage));
+            setTotalPages(Math.ceil(websites.length / itemsPerPage));
+        })
+        .then(() => {
+            console.log(displayedWebsites)
         })
         // .then(() => console.log(passOb.length))
         .catch((error) => console.error(error));     
     }, [trigger]);
+
+
+    
 
     const [settings, setSettings] = useState({
         length: 14, includeSmall: true, includeCapital: true, includeNumbers: true, includeSpecial: true
@@ -165,6 +185,21 @@ function Sidebar() {
     useEffect(() => {
         console.log(`Updated themeColors: ${themeColors}`);
     }, [themeColors]);
+
+    useEffect(() => {
+        
+        setStartIndex((currentPage - 1) * itemsPerPage);
+        console.log(`currentPage: ${currentPage}`)
+        const websites = passOb[0]?.websites || [];
+        // console.log(`right here baby ${JSON.stringify(websites)}`)
+        setDisplayedWebsites(websites.slice(startIndex, startIndex + itemsPerPage));
+        console.log(websites.slice(startIndex, startIndex + itemsPerPage))
+        setTotalPages(Math.ceil(websites.length / itemsPerPage))
+    }, [startIndex, currentPage, passOb])
+    
+
+
+    if (passOb && !displayedWebsites) return <p>Loading...</p>;
     
     return (
         <div className="container" style={{color: themeColors[2]}} >
@@ -210,8 +245,8 @@ function Sidebar() {
                                     <th>Password</th>
                                     
                                 </tr>
-
-                                {passOb[0]?.websites?.map((website) => (
+                                {displayedWebsites?.map((website) => (
+                                    
                                     <tr id="passwordSmallBoxes" key={website._id}>
                                         <th>{website.name}</th>
                                         <th>{website.username}</th>
@@ -297,6 +332,15 @@ function Sidebar() {
                                 </form>
                             </div>
                         </dialog> 
+                        <div style={{ marginTop: "10px", textAlign: "center" }}>
+                <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                    Prev
+                </button>
+                <span> Page {currentPage} of {totalPages} </span>
+                <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                    Next
+                </button>
+            </div>
 
                                             
                     </div>

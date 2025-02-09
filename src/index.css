@@ -17,8 +17,8 @@
 
 
 .sidebar {
-  background-color: #7E56C2;
-  color: lightgray;
+  /* background-color: #7E56C2; */
+  /* color: lightgray; */
   left: 0px;
   top: 0;
   height: 100vh;
@@ -30,6 +30,9 @@
   display: flex;
   justify-content: center;
   padding-top: 4vh;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .logo {
@@ -40,8 +43,8 @@
 .main {
   display: grid;
   grid-template-rows: 1fr 4.5fr;
-  background-color: #1E2129;
-  color: #ADB0B6;
+  /* background-color: #1E2129; */
+  /* color: #ADB0B6; */
 
 }
 .new_button {
@@ -119,7 +122,7 @@ td, th {
   width: 30%;
   height: 50%;
   background-color: #5A3E9A;
-  color:#ADB0B6;
+  /* color:#ADB0B6; */
   border-radius: 5px;
 }
 
@@ -134,7 +137,7 @@ td, th {
 
 #registerloginBox {
   background-color: white;
-  color:#ADB0B6;
+  /* color:#ADB0B6; */
   font-size: larger;
   font-weight: 900;
   padding: 20vh;
@@ -176,7 +179,7 @@ td, th {
 }
 
 button:hover {
-  background-color: #5A3E9A;
+  /* background-color: #5A3E9A; */
 }
 
 
@@ -192,7 +195,7 @@ button:hover {
 }
 
 input {
-  color: #ADB0B6;
+  /* color: #ADB0B6; */
   background-color: #1E2129;
   border: 1px #7E56C2;
 }
@@ -216,7 +219,7 @@ input {
   width: 35%;
   height: 60%;
   background-color: #5A3E9A;
-  color:#ADB0B6;
+  /* color:#ADB0B6; */
   border-radius: 5px;
 }
 
@@ -262,4 +265,48 @@ input {
 
 #enterdetails {
   margin-bottom: 2vh;
+}
+
+
+#title {
+  font-size: xx-large;
+  margin-top: 11vh;
+}
+
+#abouttext {
+  font-size: medium;
+  text-indent: 4vw;
+  text-align: justify;
+}
+
+
+.s_bar_element {
+  text-decoration: none;
+  /* color: inherit; */
+}
+
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.s_bar_element:hover {
+  /* color: #ADB0B6; */
+}
+
+#sunmoon {
+  width: 2vw;
+  height: 4vh;
+  background-color: white;
+}
+
+
+#themebutton {
+  min-width: 100px;
+  margin-left: 0.3vw;
+}
+
+#logoutbutton {
+  margin-right: 0.3vw;
 }

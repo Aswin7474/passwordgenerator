@@ -3,8 +3,6 @@ const router = express.Router();
 import Passwords from '../models/passwords.js';
 
 router.get('/:username', async (req, res) => {
-    console.log("did we get here")
-    console.log(req.params.username);
     try {
         const passwords = await Passwords.find({owner: req.params.username});
         res.json(passwords);
@@ -18,7 +16,6 @@ router.get('/:username', async (req, res) => {
 router.post('/', async(req, res) => {
 
     const user = await Passwords.findOne({owner: req.body.owner})
-    console.log(user)
 
     try {
         if (!user) {
@@ -53,7 +50,6 @@ router.post('/', async(req, res) => {
 
 router.patch('/:owner/:websiteId', async (req, res) => {
     const { owner, websiteId } = req.params;
-    console.log(`websiteid: ${websiteId}`)
 
     try {
         const user = await Passwords.findOne({owner});
@@ -63,10 +59,6 @@ router.patch('/:owner/:websiteId', async (req, res) => {
         if (!website) {
             return res.json({message: "Website not found"});
         }
-
-        console.log(website)
-
-        console.log(req.body.website.name, req.body.username, req.body.password)
 
         if (req.body.website?.name != null) {
             website.name = req.body.website.name;
@@ -121,7 +113,6 @@ router.delete('/:owner/:websiteId', async (req, res) => {
         }
     }
     catch(err) {
-        console.log('error at line 123');
         console.error(err);
         res.status(500).json({ message: "Something went wrong while deleting" });
     }

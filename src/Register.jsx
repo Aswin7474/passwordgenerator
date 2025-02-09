@@ -43,14 +43,16 @@ function Register() {
                 <div id="registerloginBox">
                     <form onSubmit={handleRegister}>
                         <label for="username">Enter Username</label>
-                        <input className="usernameForm" placeholder="Username" id="username" type="text" onChange={(event) => setUsername(event.target.value)} />
+                        <input style={{backgroundColor: "white"}} className="usernameForm" placeholder="Username" id="username" type="text" onChange={(event) => setUsername(event.target.value)} />
                         <br></br>
                         <label for="password">Enter Password</label>
-                        <input placeholder="Password" id="password" type={passwordOrText} onChange={(event) => setPassword(event.target.value)} />
+                        <input style={{backgroundColor: "white"}} placeholder="Password" id="password" type={passwordOrText} onChange={(event) => setPassword(event.target.value)} />
                         <span><input type="checkbox" checked={showPassword} onChange={handleShowPassword}  /> Show Password </span>
                         <br></br>
                         <button type='submit'>Register</button>
                     </form>
+                    <br></br>
+                    <h4 onClick={() => navigate('/login')}>Already a user? Login here</h4>
                 </div>
             </div>
 

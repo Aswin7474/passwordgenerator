@@ -8,18 +8,15 @@ const router = express.Router();
 router.get("/", async(req, res) => {
     try {
         res.status(200).json({message: "This is a reply"});
-        console.log("It got to try ")
     }
     catch (err) {
         res.status(400).json({message: "Something went wrong"});
-        console.log("It got to catch")
     }
    
 })
 
 router.post('/register', async(req, res) => {
     try {
-        console.log(bcrypt);
         const username = req.body.username;
         const password = req.body.password;
         const hashedPassword = await bcrypt.hash(password, 10);

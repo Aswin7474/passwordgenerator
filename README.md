@@ -1,8 +1,21 @@
-# React + Vite
+This is a simple password generator built using the MERN (MongoDB, Express, React, Node.js) stack. The application allows users to generate secure passwords based on customizable criteria.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+* Generate random passwords with adjustable length
+* Include/exclude uppercase letters, lowercase letters, numbers, and special characters
+* Store generated passwords in a database (MongoDB)
+* Retrieve previously generated passwords
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To try the app locally, follow these steps:
+
+### 1. Clone the Repository
+git clone the repo
+
+### 2. Install Dependencies
+Make sure you have Node.js and npm installed, then run:
+npm install
+
+### 3. Start the Development Server
+npm start
